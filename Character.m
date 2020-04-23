@@ -1,0 +1,73 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                                                                     %%%
+%%% Projet de 211 sur l'optimisation des objets sur le jeu vidéo League %%% 
+%%% of Legends                                                          %%%
+%%%                                                                     %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%% Définition d'un personnage
+%  Toutes les statistiques présentes ne seront pas forcément utilisées
+classdef Character < handle
+    
+    properties
+        % Définition de ses caractéristique
+        LVL             % Niveau du personnage
+        HP              % Points de vie
+        Resource        % Ressource utilisée pour l'activation de ses compétences (Mana ou énergie)
+        HealthRegen     % Régénération de points de vie par seconde
+        ResourceRegen   % Régénération des ressources par seconde
+        AD              % Dégats physiques
+        AP              % Dégats magiques
+        Armor           % Défense contre les dégats physiques
+        MagicResist     % Défense contre les dégats magiques
+        AS              % Vitesse d'attaque (ratio)
+        AS_Ratio        % Coefficient de bonus de vitesse d'attaque avec les objets
+        CritD           % Dégats des coup critique (ratio)
+        CritC           % Chance de coup critique (ratio)
+        LifeSteal       % Récupération de points de vie après avoir infligés des dégats avec une attaque de base (ratio)
+        SpellVamp       % Récupération de points de vie après avoir infligés des dégats avec un sort (ratio)
+        CDR             % Réduction des délais sur les sorts
+        Gold            % Pièces d'or en sa possession
+        ArmorPen        % Pénétration de la défense physique (ratio)
+        MagicPen        % Pénétration de la défense magique (ratio)
+        Q_spell         % Premier sort du personnage
+        W_Spell         % Deuxième sort
+        E_Spell         % Troisieme sort
+        R_Spell         % Sort ultime
+        Inventory       % Inventaire
+    end
+    
+    methods
+       % Définition de ses interaction avec les objets
+       function self = Character(LVL, HP, Resource, HeatlhRegen, ResourceRegen, AD, AP, Armor, MagicResist, AS, AS_Ratio, CritD, CritC, LifeSteal, SpellVamp, CDR, Gold, ArmorPen, MagicPen, Q_spell, Inventory);
+            self.LVL                % Niveau du personnage
+            self.HP                 % Points de vie
+            self.Resource           % Ressource utilisée pour l'activation de ses compétences (Mana ou énergie)
+            self.HealthRegen        % Régénération de points de vie par seconde
+            self.ResourceRegen      % Régénération des ressources par seconde
+            self.AD                 % Dégats physiques
+            self.AP                 % Dégats magiques
+            self.Armor              % Défense contre les dégats physiques
+            self.MagicResist        % Défense contre les dégats magiques
+            self.AS                 % Vitesse d'attaque (ratio)
+            self.AS_Ratio           % Coefficient de bonus de vitesse d'attaque avec les objets
+            self.CritD              % Dégats des coup critique (ratio)
+            self.CritC              % Chance de coup critique (ratio)
+            self.LifeSteal          % Récupération de points de vie après avoir infligés des dégats avec une attaque de base (ratio)
+            self.SpellVamp          % Récupération de points de vie après avoir infligés des dégats avec un sort (ratio)
+            self.CDR                % Réduction des délais sur les sorts
+            self.Gold               % Pièces d'or en sa possession
+            self.ArmorPen           % Pénétration de la défense physique (ratio)
+            self.MagicPen           % Pénétration de la défense magique (ratio)
+            self.Q_spell            % Premier sort du personnage
+            self.Inventory          % Inventaire
+       end
+       
+       function self = trade_auto(self, other)
+       % Combat simple avec des attaques basiques
+          self.HP = self.HP - other.AD .* 100/(100+self.Armor);
+          other.HP = other.HP - self.AD .* 100/(100+other.Armor);
+       end
+    end
+end
