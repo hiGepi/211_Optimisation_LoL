@@ -8,7 +8,7 @@
 
 %% Définition d'un personnage
 %  Toutes les statistiques présentes ne seront pas forcément utilisées
-classdef Character < handle
+classdef Character 
     
     properties
         % Définition de ses caractéristique
@@ -36,11 +36,20 @@ classdef Character < handle
         E_Spell         % Troisieme sort
         R_Spell         % Sort ultime
         Inventory       % Inventaire
+        
+        % Coefficients pour l'algo génétique
+        C_HP            
+        C_Armor
+        C_AD
+        C_AP
+        C_AS
+        
+        Win_count       % Nombre de fois où il a gagné
     end
     
     methods
        % Définition de ses interaction avec les objets
-       function self = Character(LVL, HP, Resource, HeatlhRegen, ResourceRegen, AD, AP, Armor, MagicResist, AS, AS_Ratio, CritD, CritC, LifeSteal, SpellVamp, CDR, Gold, ArmorPen, MagicPen, Q_spell, Inventory);
+       function self = Character(LVL, HP, Resource, HeatlhRegen, ResourceRegen, AD, AP, Armor, MagicResist, AS, AS_Ratio, CritD, CritC, LifeSteal, SpellVamp, CDR, Gold, ArmorPen, MagicPen, Q_spell, W_spell, E_spell, R_spell, Inventory, C_HP, C_Armo, C_AD, C_AP, C_AS, Win_count);
             self.LVL                % Niveau du personnage
             self.HP                 % Points de vie
             self.Resource           % Ressource utilisée pour l'activation de ses compétences (Mana ou énergie)
@@ -61,13 +70,47 @@ classdef Character < handle
             self.ArmorPen           % Pénétration de la défense physique (ratio)
             self.MagicPen           % Pénétration de la défense magique (ratio)
             self.Q_spell            % Premier sort du personnage
+            self.W_Spell            % Deuxième sort
+            self.E_Spell            % Troisieme sort
+            self.R_Spell            % Sort ultime
             self.Inventory          % Inventaire
+            % Coefficients pour l'algo génétique
+            self.C_HP            
+            self.C_Armor
+            self.C_AD
+            self.C_AP
+            self.C_AS
+            
+            self.Win_count
        end
        
        function self = trade_auto(self, other)
        % Combat simple avec des attaques basiques
-          self.HP = self.HP - other.AD .* 100/(100+self.Armor);
-          other.HP = other.HP - self.AD .* 100/(100+other.Armor);
+          self.HP = self.HP - (other.AD* 100/(100+self.Armor))*other.AS;
+          other.HP = other.HP - (self.AD * 100/(100+other.Armor))*self.AS;
+       end
+       
+       function self = fight_to_death(self, other)
+           HP_mem = other.HP;
+           HP_mem2 = self.HP;
+           while (self.HP > 0) && (other.HP > 0)
+              self.trade_auto(other); 
+           end
+           if self.HP > 0 
+               self.Win_count = self.Win_count+1;
+           else
+               self.Win_count = self.Win_count;
+           end
+           other.HP = HP_mem;
+           self.HP = HP_mem2;
+       end
+       
+       function self = buy_stats(self)
+           self.HP = self.HP + self.C_HP*self.Gold/2.67;
+           self.Armor = self.Armor + self.C_Armor*self.Gold/20;
+           self.AD = self.AD + self.C_AD*self.Gold/35;
+           self.AP = self.AP + self.C_AP*self.Gold/21.75;
+           self.AS = self.AS + self.C_AS*self.Gold/2500;
        end
     end
 end
