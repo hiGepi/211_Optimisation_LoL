@@ -86,18 +86,18 @@ classdef Character
        
        function self = trade_auto(self, other)
        % Combat simple avec des attaques basiques
-          self.HP = self.HP - (other.AD* 100/(100+self.Armor))*other.AS;
-          other.HP = other.HP - (self.AD * 100/(100+other.Armor))*self.AS;
+          self.HP = self.HP - (other.AD* 100/(100+self.Armor))*other.AS;   
        end
        
        function self = fight_to_death(self, other)
            HP_mem = other.HP;
            HP_mem2 = self.HP;
-           while (self.HP > 0) && (other.HP > 0)
-              self.trade_auto(other); 
+           while ((self.HP > 0) & (other.HP > 0))
+              self = self.trade_auto(other);
+              other = other.trade_auto(self);
            end
            if self.HP > 0 
-               self.Win_count = self.Win_count+1;
+               self.Win_count = self.Win_count + 1;
            else
                self.Win_count = self.Win_count;
            end
